@@ -1,0 +1,32 @@
+:: Start
+<div class="cq-shell">
+  <div class="cq-title">CourseQuest</div>
+  <div class="cq-subtitle">請輸入小組名稱開始任務</div>
+
+  <div>小組名稱</div>
+  <input id="cq-group" class="cq-input" placeholder="輸入小組名稱" value="<<print $groupName>>">
+
+  <<button "開始任務">>
+    <<set $groupName = $('#cq-group').val().trim()>>
+    <<if $groupName.length > 0>>
+      <<set $currentNodeId = setup.cq.firstId()>>
+      <<set $errorMessage = "">>
+      <<set $lastFeedback = "">>
+      <<run setup.cq.saveProgress()>>
+      <<goto "Gate">>
+    <<else>>
+      <<set $errorMessage = "請輸入小組名稱。">>
+    <</if>>
+  <</button>>
+
+  <<if $currentNodeId>>
+    <<button "繼續上次進度">>
+      <<run setup.cq.saveProgress()>>
+      <<goto "Gate">>
+    <</button>>
+  <</if>>
+
+  <<if $errorMessage>>
+    <div class="cq-error"><<print $errorMessage>></div>
+  <</if>>
+</div>

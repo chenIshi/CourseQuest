@@ -1,0 +1,101 @@
+:: Story Stylesheet [stylesheet]
+/* CourseQuest v1 - SugarCube Story Stylesheet */
+body {
+  margin: 0;
+  font-family: "Noto Sans TC", "PingFang TC", "Heiti TC", "Microsoft JhengHei", sans-serif;
+  background: radial-gradient(circle at top, #0f3a3a, #0a1f1f 60%, #081414 100%);
+  color: #f5f6f1;
+}
+
+#ui-bar {
+  background: #0b2222;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cq-shell {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 28px;
+  background: rgba(10, 22, 22, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.cq-title {
+  font-size: 32px;
+  letter-spacing: 1px;
+  margin: 0 0 10px 0;
+}
+
+.cq-subtitle {
+  color: #cbe3df;
+  margin-bottom: 18px;
+}
+
+.cq-prompt {
+  font-size: 22px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.cq-input {
+  width: 100%;
+  font-size: 20px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: #0d2c2a;
+  color: #f5f6f1;
+  box-sizing: border-box;
+}
+
+.cq-button {
+  margin-top: 12px;
+  font-size: 18px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  background: #f4c15d;
+  color: #1f1f1f;
+  border: none;
+  cursor: pointer;
+}
+
+.cq-button.secondary {
+  background: transparent;
+  color: #f4c15d;
+  border: 1px solid #f4c15d;
+  margin-left: 10px;
+}
+
+.cq-feedback {
+  margin-top: 14px;
+  font-size: 18px;
+  color: #ffd67a;
+}
+
+.cq-error {
+  margin-top: 14px;
+  font-size: 18px;
+  color: #ff9f9f;
+}
+
+.cq-progress {
+  margin-top: 18px;
+  color: #9ec7bf;
+}
+
+@media (max-width: 600px) {
+  .cq-shell {
+    margin: 16px;
+    padding: 20px;
+  }
+
+  .cq-title {
+    font-size: 26px;
+  }
+
+  .cq-prompt {
+    font-size: 20px;
+  }
+}

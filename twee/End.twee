@@ -1,0 +1,11 @@
+:: End
+<div class="cq-shell">
+  <div class="cq-title">任務完成！</div>
+  <div class="cq-subtitle">辛苦了，<<print $groupName>>！</div>
+  <div class="cq-prompt">你們已通關，請等待下一指令。</div>
+
+  <<button "重新開始">>
+    <<run setup.cq.resetProgress()>>
+    <<goto "Start">>
+  <</button>>
+</div>
