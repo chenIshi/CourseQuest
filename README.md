@@ -32,7 +32,7 @@ Tweego is required to compile `.twee` into `index.html`.
 The CSV is designed to be edited in Excel/Google Sheets. Use the first row as headers:
 
 ```
-id,prompt,placeholder,answers,regex,onSuccess,nextId
+id,prompt,placeholder,answers,regex,onSuccess,nextId,revisit,title
 ```
 
 - `id`: unique gate ID
@@ -42,11 +42,28 @@ id,prompt,placeholder,answers,regex,onSuccess,nextId
 - `regex`: optional regex patterns, separated by `|`
 - `onSuccess`: message shown after a correct answer
 - `nextId`: the next gate ID (empty means end)
+- `revisit`: short reminder shown if a clue is visited again (optional)
+- `title`: used only by the special `META` row
 
 Example row:
 ```
 G1,"第一關：三星堆最早於哪一年被發現？","輸入年份（例如 1929）","1929",,"太棒了！進入下一關。",G2
 ```
+
+### Story title (META row)
+Add one row with `id` = `META` to set the title on the start screen:
+```
+META,,,,,,,,考古小偵探任務
+```
+
+### Branching (Option B: multiple rows with the same id)
+To create multiple outgoing edges, add multiple rows with the same `id`. Each row can define a different `answers` → `nextId` mapping. The first matching row wins.
+
+Fallback rule: if you include a row with `answers` set to `*` (or `regex` set to `.*`), that row is used when no other row matches.
+
+### Hub + checklist pattern (S2)
+This repo supports a hub question that routes to multiple info nodes, then returns to the hub until all target nodes are visited. The targets are set in Story JavaScript:
+`setup.cq.goalIds = ["S3","S4","S5","S6","S7"]`.
 
 ## Answer checking rules (v1)
 - Trims whitespace, collapses multiple spaces, lowercases Latin letters.
@@ -58,6 +75,11 @@ G1,"第一關：三星堆最早於哪一年被發現？","輸入年份（例如 
 - Only edit `content.csv`.
 - Run `python3 tools/csv_to_twee.py` before building (Tweego path).
 - No JSON required.
+
+## Progress saving
+- Progress is saved per **group name** in `localStorage` (one device/browser).
+- Starting a new group name resets that group’s progress.
+- “重新開始” clears the current group’s saved progress.
 
 ## Deploy to GitHub Pages
 1) Export from Twine and rename the file to `index.html`.

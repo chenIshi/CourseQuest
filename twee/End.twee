@@ -3,6 +3,7 @@
   <div class="cq-title">任務完成！</div>
   <div class="cq-subtitle">辛苦了，<<print $groupName>>！</div>
   <div class="cq-prompt">你們已通關，請等待下一指令。</div>
+  <div class="cq-feedback">完成時間：<<print setup.cq.formatDuration(setup.cq.getElapsedMs())>></div>
 
   <<button "重新開始">>
     <<run setup.cq.resetProgress()>>

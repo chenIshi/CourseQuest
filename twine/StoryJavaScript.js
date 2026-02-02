@@ -4,14 +4,36 @@
 
   var CQ = {};
   CQ.storageKeys = {
-    groupName: "cq.groupName",
-    currentNodeId: "cq.currentNodeId"
+    lastGroupName: "cq.lastGroupName"
   };
 
   CQ.config = {
     stripPunctuation: false,
     collapseWhitespace: true,
     wrongMessage: "感謝您的努力解題！❤️ 再試一試！💪"
+  };
+
+  CQ.goalIds = ["S3", "S4", "S5", "S6", "S7"];
+
+  if (window.Config && Config.saves) {
+    Config.saves.isAllowed = false;
+    Config.saves.autosave = false;
+  }
+
+  CQ.progressKey = function (name) {
+    return "cq.progress." + name;
+  };
+
+  CQ.formatDuration = function (ms) {
+    if (!ms || ms < 0) ms = 0;
+    var totalSeconds = Math.floor(ms / 1000);
+    var minutes = Math.floor(totalSeconds / 60);
+    var seconds = totalSeconds % 60;
+    return minutes + " 分 " + (seconds < 10 ? "0" : "") + seconds + " 秒";
+  };
+
+  CQ.now = function () {
+    return Date.now();
   };
 
   CQ.fullwidthToHalfwidth = function (s) {
@@ -113,6 +135,7 @@
 
     var nodes = {};
     var order = [];
+    var meta = {};
 
     for (var r = 1; r < rows.length; r++) {
       var cols = rows[r];
@@ -125,20 +148,53 @@
       }
 
       if (!obj.id) continue;
+      if (obj.id === "META") {
+        if (obj.title) meta.title = obj.title;
+        continue;
+      }
 
-      nodes[obj.id] = {
-        id: obj.id,
-        promptHTML: obj.prompt || "",
-        inputPlaceholder: obj.placeholder || "",
-        answers: CQ.splitList(obj.answers),
-        regexAnswers: CQ.splitList(obj.regex),
+      if (!nodes[obj.id]) {
+        nodes[obj.id] = {
+          id: obj.id,
+          promptHTML: obj.prompt || "",
+          inputPlaceholder: obj.placeholder || "",
+          revisitHTML: obj.revisit || "",
+          variants: []
+        };
+        order.push(obj.id);
+      }
+
+      if (!nodes[obj.id].promptHTML && obj.prompt) {
+        nodes[obj.id].promptHTML = obj.prompt;
+      }
+      if (!nodes[obj.id].revisitHTML && obj.revisit) {
+        nodes[obj.id].revisitHTML = obj.revisit;
+      }
+
+      if (nodes[obj.id].promptHTML) {
+        nodes[obj.id].promptHTML = nodes[obj.id].promptHTML.replace(/\\n/g, "<br>");
+      }
+      if (nodes[obj.id].revisitHTML) {
+        nodes[obj.id].revisitHTML = nodes[obj.id].revisitHTML.replace(/\\n/g, "<br>");
+      }
+      if (!nodes[obj.id].inputPlaceholder && obj.placeholder) {
+        nodes[obj.id].inputPlaceholder = obj.placeholder;
+      }
+
+      var answers = CQ.splitList(obj.answers);
+      var regexAnswers = CQ.splitList(obj.regex);
+      var isFallback = answers.indexOf("*") >= 0 || regexAnswers.indexOf(".*") >= 0;
+
+      nodes[obj.id].variants.push({
+        answers: answers,
+        regexAnswers: regexAnswers,
         onSuccessHTML: obj.onsuccess || "",
-        nextId: obj.nextid || ""
-      };
-      order.push(obj.id);
+        nextId: obj.nextid || "",
+        isFallback: isFallback
+      });
     }
 
-    return { nodes: nodes, order: order };
+    return { nodes: nodes, order: order, meta: meta };
   };
 
   CQ.getCsvText = function () {
@@ -152,14 +208,34 @@
     var result = CQ.loadNodesFromCsv(csvText);
     CQ.nodes = result.nodes;
     CQ.order = result.order;
+    CQ.meta = result.meta || {};
 
     if (State.variables.groupName == null) State.variables.groupName = "";
     if (State.variables.currentNodeId == null) State.variables.currentNodeId = "";
+    if (State.variables.completedIds == null) State.variables.completedIds = [];
     if (State.variables.lastFeedback == null) State.variables.lastFeedback = "";
     if (State.variables.errorMessage == null) State.variables.errorMessage = "";
     if (State.variables.answer == null) State.variables.answer = "";
 
     CQ.loadProgress();
+  };
+
+  CQ.isGoal = function (id) {
+    return CQ.goalIds.indexOf(id) >= 0;
+  };
+
+  CQ.markCompleted = function (id) {
+    if (!CQ.isGoal(id)) return;
+    if (State.variables.completedIds.indexOf(id) >= 0) return;
+    State.variables.completedIds.push(id);
+  };
+
+  CQ.allGoalsCompleted = function () {
+    if (!CQ.goalIds.length) return false;
+    for (var i = 0; i < CQ.goalIds.length; i++) {
+      if (State.variables.completedIds.indexOf(CQ.goalIds[i]) < 0) return false;
+    }
+    return true;
   };
 
   CQ.firstId = function () {
@@ -171,39 +247,64 @@
   };
 
   CQ.checkAnswer = function (node, userInput) {
-    if (!node) return false;
+    if (!node) return { ok: false };
     var input = CQ.normalize(userInput);
+    var fallback = null;
 
-    for (var i = 0; i < node.answers.length; i++) {
-      var candidateRaw = node.answers[i];
-      var candidate = CQ.normalize(candidateRaw);
+    for (var v = 0; v < node.variants.length; v++) {
+      var variant = node.variants[v];
+      if (variant.isFallback) {
+        fallback = variant;
+        continue;
+      }
 
-      if (CQ.isDigitsOnly(candidate)) {
-        if (CQ.fullwidthToHalfwidth(String(userInput)).trim() === candidate) {
-          return true;
+      for (var i = 0; i < variant.answers.length; i++) {
+        var candidateRaw = variant.answers[i];
+        var candidate = CQ.normalize(candidateRaw);
+
+        if (CQ.isDigitsOnly(candidate)) {
+          if (CQ.fullwidthToHalfwidth(String(userInput)).trim() === candidate) {
+            return { ok: true, nextId: variant.nextId, onSuccessHTML: variant.onSuccessHTML };
+          }
+        } else if (input === candidate) {
+          return { ok: true, nextId: variant.nextId, onSuccessHTML: variant.onSuccessHTML };
         }
-      } else if (input === candidate) {
-        return true;
+      }
+
+      for (var r = 0; r < variant.regexAnswers.length; r++) {
+        var pattern = variant.regexAnswers[r];
+        try {
+          var re = new RegExp(pattern);
+          if (re.test(input)) {
+            return { ok: true, nextId: variant.nextId, onSuccessHTML: variant.onSuccessHTML };
+          }
+        } catch (e) {
+          // ignore invalid regex
+        }
       }
     }
 
-    for (var r = 0; r < node.regexAnswers.length; r++) {
-      var pattern = node.regexAnswers[r];
-      try {
-        var re = new RegExp(pattern);
-        if (re.test(input)) return true;
-      } catch (e) {
-        // ignore invalid regex
-      }
+    if (fallback) {
+      return { ok: true, nextId: fallback.nextId, onSuccessHTML: fallback.onSuccessHTML };
     }
 
-    return false;
+    return { ok: false };
   };
 
   CQ.saveProgress = function () {
     try {
-      localStorage.setItem(CQ.storageKeys.groupName, State.variables.groupName || "");
-      localStorage.setItem(CQ.storageKeys.currentNodeId, State.variables.currentNodeId || "");
+      var name = (State.variables.groupName || "").trim();
+      var key = CQ.progressKey(name || "_default");
+      var data = {
+        currentNodeId: State.variables.currentNodeId || "",
+        completedIds: State.variables.completedIds || [],
+        startTime: State.variables.startTime || 0,
+        endTime: State.variables.endTime || 0
+      };
+      localStorage.setItem(key, JSON.stringify(data));
+      if (name) {
+        localStorage.setItem(CQ.storageKeys.lastGroupName, name);
+      }
     } catch (e) {
       // ignore storage errors
     }
@@ -211,10 +312,31 @@
 
   CQ.loadProgress = function () {
     try {
-      var gn = localStorage.getItem(CQ.storageKeys.groupName);
-      var cn = localStorage.getItem(CQ.storageKeys.currentNodeId);
-      if (gn != null) State.variables.groupName = gn;
-      if (cn != null) State.variables.currentNodeId = cn;
+      var name = (State.variables.groupName || "").trim();
+      if (!name) {
+        var last = localStorage.getItem(CQ.storageKeys.lastGroupName);
+        if (last) {
+          State.variables.groupName = last;
+          name = last;
+        }
+      }
+
+      var key = CQ.progressKey(name || "_default");
+      var raw = localStorage.getItem(key);
+      if (raw) {
+        try {
+          var data = JSON.parse(raw) || {};
+          State.variables.currentNodeId = data.currentNodeId || "";
+          State.variables.completedIds = data.completedIds || [];
+          State.variables.startTime = data.startTime || 0;
+          State.variables.endTime = data.endTime || 0;
+        } catch (e) {
+          State.variables.currentNodeId = "";
+          State.variables.completedIds = [];
+          State.variables.startTime = 0;
+          State.variables.endTime = 0;
+        }
+      }
     } catch (e) {
       // ignore storage errors
     }
@@ -222,17 +344,86 @@
 
   CQ.resetProgress = function () {
     try {
-      localStorage.removeItem(CQ.storageKeys.groupName);
-      localStorage.removeItem(CQ.storageKeys.currentNodeId);
+      var name = (State.variables.groupName || "").trim();
+      localStorage.removeItem(CQ.progressKey(name || "_default"));
+      if (name) {
+        var last = localStorage.getItem(CQ.storageKeys.lastGroupName);
+        if (last === name) localStorage.removeItem(CQ.storageKeys.lastGroupName);
+      }
     } catch (e) {
       // ignore storage errors
     }
     State.variables.groupName = "";
     State.variables.currentNodeId = "";
+    State.variables.completedIds = [];
+    State.variables.startTime = 0;
+    State.variables.endTime = 0;
     State.variables.lastFeedback = "";
     State.variables.errorMessage = "";
     State.variables.answer = "";
   };
+
+  CQ.resetProgressForGroup = function (name) {
+    try {
+      var keyName = (name || "").trim();
+      localStorage.removeItem(CQ.progressKey(keyName || "_default"));
+    } catch (e) {
+      // ignore storage errors
+    }
+    State.variables.currentNodeId = "";
+    State.variables.completedIds = [];
+    State.variables.startTime = 0;
+    State.variables.endTime = 0;
+  };
+
+  CQ.ensureStartTime = function () {
+    if (!State.variables.startTime) {
+      State.variables.startTime = CQ.now();
+    }
+  };
+
+  CQ.finishTimer = function () {
+    if (!State.variables.endTime) {
+      State.variables.endTime = CQ.now();
+    }
+  };
+
+  CQ.getElapsedMs = function () {
+    var start = State.variables.startTime || 0;
+    if (!start) return 0;
+    var end = State.variables.endTime || CQ.now();
+    return end - start;
+  };
+
+  CQ.renderSidebar = function () {
+    var total = CQ.goalIds.length;
+    var done = (State.variables.completedIds || []).length;
+    var dots = "";
+    for (var i = 0; i < total; i++) {
+      dots += i < done ? "●" : "○";
+    }
+
+    var container = document.getElementById("cq-sidebar-progress");
+    if (!container) {
+      var uiBody = document.getElementById("ui-bar-body") || document.getElementById("ui-bar");
+      if (!uiBody) return;
+      container = document.createElement("div");
+      container.id = "cq-sidebar-progress";
+      uiBody.appendChild(container);
+    }
+
+    var duration = CQ.formatDuration(CQ.getElapsedMs());
+    container.innerHTML = "" +
+      "<div class=\"cq-sidebar-title\">進度</div>" +
+      "<div class=\"cq-sidebar-text\">已完成 " + done + " / " + total + " 個線索</div>" +
+      "<div class=\"cq-progress-dots\" aria-label=\"progress\">" + dots + "</div>" +
+      "<div class=\"cq-sidebar-text\">時間 " + duration + "</div>";
+  };
+
+  $(document).on(":storyready :passagedisplay", function () {
+    $("#menu-item-saves, #menu-story-saves, .saves, a[data-passage='Saves']").remove();
+    if (setup.cq && setup.cq.renderSidebar) setup.cq.renderSidebar();
+  });
 
   setup.cq = CQ;
 })();

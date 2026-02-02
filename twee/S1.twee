@@ -1,0 +1,17 @@
+:: S1
+<div class="cq-shell">
+  <div class="cq-title">冒險開始</div>
+  <div class="cq-subtitle"><<print $groupName>> 你好！</div>
+
+  <div class="cq-prompt">
+    我是考古小偵探。感謝您來到考古的世界😉<br>
+    我是考古小偵探，是來幫助你尋找消失的城市的！🔍<br>
+    請拿出你的智慧與勇氣，尋找消失的寶藏吧! 💰
+  </div>
+
+  <<button "走進三星堆">>
+    <<set $currentNodeId = "S2">>
+    <<run setup.cq.saveProgress()>>
+    <<goto "Gate">>
+  <</button>>
+</div>

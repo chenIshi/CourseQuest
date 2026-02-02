@@ -12,6 +12,32 @@ body {
   border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+#cq-sidebar-progress {
+  margin-top: 18px;
+  padding: 12px;
+  background: rgba(13, 44, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+}
+
+.cq-sidebar-title {
+  font-size: 16px;
+  color: #cbe3df;
+  margin-bottom: 6px;
+}
+
+.cq-sidebar-text {
+  font-size: 14px;
+  color: #f5f6f1;
+  margin-bottom: 6px;
+}
+
+.cq-progress-dots {
+  font-size: 16px;
+  letter-spacing: 2px;
+  color: #f4c15d;
+}
+
 .cq-shell {
   max-width: 900px;
   margin: 30px auto;
