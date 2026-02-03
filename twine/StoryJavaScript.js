@@ -420,9 +420,34 @@
       "<div class=\"cq-sidebar-text\">時間 " + duration + "</div>";
   };
 
+  CQ.applyBackground = function (passageName) {
+    var id = passageName || "";
+    if (id === "Gate") {
+      id = State.variables.currentNodeId || "Gate";
+    }
+
+    var body = document.body;
+    if (!body) return;
+
+    var classes = body.className ? body.className.split(/\s+/) : [];
+    var keep = [];
+    for (var i = 0; i < classes.length; i++) {
+      if (classes[i].indexOf("cq-bg-") !== 0) keep.push(classes[i]);
+    }
+    body.className = keep.join(" ");
+
+    if (id) {
+      body.classList.add("cq-bg-" + id);
+    }
+  };
+
   $(document).on(":storyready :passagedisplay", function () {
     $("#menu-item-saves, #menu-story-saves, .saves, a[data-passage='Saves']").remove();
     if (setup.cq && setup.cq.renderSidebar) setup.cq.renderSidebar();
+    if (setup.cq && setup.cq.applyBackground) {
+      var name = (State && State.passage) ? State.passage : (typeof passage !== "undefined" && passage.title ? passage.title : "");
+      setup.cq.applyBackground(name);
+    }
   });
 
   setup.cq = CQ;

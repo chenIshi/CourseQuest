@@ -7,6 +7,72 @@ body {
   color: #f5f6f1;
 }
 
+html,
+body {
+  min-height: 100%;
+  height: 100%;
+}
+
+#story,
+#passages {
+  background: transparent !important;
+  min-height: 0;
+}
+
+#passage,
+.passage {
+  background: transparent !important;
+  min-height: 0;
+  padding-bottom: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+body[class*="cq-bg-"] {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+body.cq-bg-Start {
+  background-image: linear-gradient(rgba(8, 20, 20, 0.45), rgba(8, 20, 20, 0.65)), url("img/Start.png");
+}
+
+body.cq-bg-S1 {
+  background-image: linear-gradient(rgba(8, 20, 20, 0.45), rgba(8, 20, 20, 0.65)), url("img/S1.png");
+}
+
+body.cq-bg-S2 {
+  background-image: linear-gradient(rgba(8, 20, 20, 0.45), rgba(8, 20, 20, 0.65)), url("img/S2.png");
+}
+
+body.cq-bg-S3 {
+  background-image: linear-gradient(rgba(8, 20, 20, 0.45), rgba(8, 20, 20, 0.65)), url("img/S3.png");
+}
+
+body.cq-bg-S4 {
+  background-image: linear-gradient(rgba(8, 20, 20, 0.45), rgba(8, 20, 20, 0.65)), url("img/S4.png");
+}
+
+body.cq-bg-S5 {
+  background-image: linear-gradient(rgba(8, 20, 20, 0.45), rgba(8, 20, 20, 0.65)), url("img/S5.png");
+}
+
+body.cq-bg-S6 {
+  background-image: linear-gradient(rgba(8, 20, 20, 0.45), rgba(8, 20, 20, 0.65)), url("img/S6.png");
+}
+
+body.cq-bg-S7 {
+  background-image: linear-gradient(rgba(8, 20, 20, 0.45), rgba(8, 20, 20, 0.65)), url("img/S7.png");
+}
+
+body.cq-bg-S8 {
+  background-image: linear-gradient(rgba(8, 20, 20, 0.45), rgba(8, 20, 20, 0.65)), url("img/S8.png");
+}
+
+body.cq-bg-End {
+  background-image: linear-gradient(rgba(8, 20, 20, 0.45), rgba(8, 20, 20, 0.65)), url("img/End.png");
+}
+
 #ui-bar {
   background: #0b2222;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
@@ -39,13 +105,14 @@ body {
 }
 
 .cq-shell {
-  max-width: 900px;
+  max-width: 840px;
   margin: 30px auto;
   padding: 28px;
-  background: rgba(10, 22, 22, 0.75);
+  background: rgba(10, 22, 22, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
 }
 
 .cq-title {

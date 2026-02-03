@@ -160,9 +160,6 @@ Create the following passages in Twine (SugarCube 2). Copy the content exactly.
       <div class="cq-error"><<print $errorMessage>></div>
     <</if>>
 
-    <<set _index = setup.cq.order.indexOf(_node.id) + 1>>
-    <<set _total = setup.cq.order.length>>
-    <div class="cq-progress">第 <<print _index>> / <<print _total>> 關</div>
   <</if>>
 </div>
 ```
