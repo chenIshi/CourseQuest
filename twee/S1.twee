@@ -1,4 +1,5 @@
 :: S1
+<<nobr>>
 <div class="cq-shell">
   <div class="cq-title">冒險開始</div>
   <div class="cq-subtitle"><<print $groupName>> 你好！</div>
@@ -15,3 +16,4 @@
     <<goto "Gate">>
   <</button>>
 </div>
+<</nobr>>

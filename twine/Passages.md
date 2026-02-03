@@ -9,6 +9,7 @@ Create the following passages in Twine (SugarCube 2). Copy the content exactly.
 
 ## Start
 ```
+<<nobr>>
 <div class="cq-shell">
   <div class="cq-title"><<print (setup.cq.meta && setup.cq.meta.title) ? setup.cq.meta.title : "CourseQuest">></div>
   <div class="cq-subtitle">請輸入小組名稱開始任務</div>
@@ -42,10 +43,12 @@ Create the following passages in Twine (SugarCube 2). Copy the content exactly.
     <div class="cq-error"><<print $errorMessage>></div>
   <</if>>
 </div>
+<</nobr>>
 ```
 
 ## S1
 ```
+<<nobr>>
 <div class="cq-shell">
   <div class="cq-title">冒險開始</div>
   <div class="cq-subtitle"><<print $groupName>> 你好！</div>
@@ -62,10 +65,12 @@ Create the following passages in Twine (SugarCube 2). Copy the content exactly.
     <<goto "Gate">>
   <</button>>
 </div>
+<</nobr>>
 ```
 
 ## Gate
 ```
+<<nobr>>
 <<set _node = setup.cq.getNode($currentNodeId)>>
 <<if _node>>
   <<set _wasCompleted = $completedIds.includes(_node.id)>>
@@ -162,10 +167,12 @@ Create the following passages in Twine (SugarCube 2). Copy the content exactly.
 
   <</if>>
 </div>
+<</nobr>>
 ```
 
 ## End
 ```
+<<nobr>>
 <div class="cq-shell">
   <div class="cq-title">任務完成！</div>
   <div class="cq-subtitle">辛苦了，<<print $groupName>>！</div>
@@ -177,6 +184,7 @@ Create the following passages in Twine (SugarCube 2). Copy the content exactly.
     <<goto "Start">>
   <</button>>
 </div>
+<</nobr>>
 ```
 
 ## ContentCSV

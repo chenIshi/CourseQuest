@@ -1,4 +1,5 @@
 :: Gate
+<<nobr>>
 <<set _node = setup.cq.getNode($currentNodeId)>>
 <<if _node>>
   <<set _wasCompleted = $completedIds.includes(_node.id)>>
@@ -95,3 +96,4 @@
 
   <</if>>
 </div>
+<</nobr>>

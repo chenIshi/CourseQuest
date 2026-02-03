@@ -1,4 +1,5 @@
 :: Start
+<<nobr>>
 <div class="cq-shell">
   <div class="cq-title"><<print (setup.cq.meta && setup.cq.meta.title) ? setup.cq.meta.title : "CourseQuest">></div>
   <div class="cq-subtitle">請輸入小組名稱開始任務</div>
@@ -32,3 +33,4 @@
     <div class="cq-error"><<print $errorMessage>></div>
   <</if>>
 </div>
+<</nobr>>
