@@ -32,7 +32,7 @@ Tweego is required to compile `.twee` into `index.html`.
 The CSV is designed to be edited in Excel/Google Sheets. Use the first row as headers:
 
 ```
-id,prompt,placeholder,answers,regex,onSuccess,nextId,revisit,title
+id,prompt,placeholder,answers,regex,onSuccess,nextId,revisit,title,imageMode
 ```
 
 - `id`: unique gate ID
@@ -44,6 +44,7 @@ id,prompt,placeholder,answers,regex,onSuccess,nextId,revisit,title
 - `nextId`: the next gate ID (empty means end)
 - `revisit`: short reminder shown if a clue is visited again (optional)
 - `title`: used only by the special `META` row
+- `imageMode`: `bg` (background) or `fg` (image inside panel), used only by `META`
 
 Example row:
 ```
@@ -53,7 +54,7 @@ G1,"第一關：三星堆最早於哪一年被發現？","輸入年份（例如 
 ### Story title (META row)
 Add one row with `id` = `META` to set the title on the start screen:
 ```
-META,,,,,,,,考古小偵探任務
+META,,,,,,,,考古小偵探任務,bg
 ```
 
 ### Branching (Option B: multiple rows with the same id)

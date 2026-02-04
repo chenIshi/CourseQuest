@@ -2,6 +2,9 @@
 <<nobr>>
 <div class="cq-shell">
   <div class="cq-title">冒險開始</div>
+  <<if setup.cq.meta && setup.cq.meta.imageMode == "fg">>
+    <img class="cq-hero" data-passage="S1" alt="">
+  <</if>>
   <div class="cq-subtitle"><<print $groupName>> 你好！</div>
 
   <div class="cq-prompt">

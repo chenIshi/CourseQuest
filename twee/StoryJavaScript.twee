@@ -151,6 +151,7 @@
       if (!obj.id) continue;
       if (obj.id === "META") {
         if (obj.title) meta.title = obj.title;
+        if (obj.imagemode) meta.imageMode = obj.imagemode;
         continue;
       }
 
@@ -422,6 +423,19 @@
   };
 
   CQ.applyBackground = function (passageName) {
+    if (CQ.meta && CQ.meta.imageMode === "fg") {
+      var body = document.body;
+      if (body) {
+        var classes = body.className ? body.className.split(/\\s+/) : [];
+        var keep = [];
+        for (var i = 0; i < classes.length; i++) {
+          if (classes[i].indexOf("cq-bg-") !== 0) keep.push(classes[i]);
+        }
+        body.className = keep.join(" ");
+      }
+      return;
+    }
+
     var id = passageName || "";
     if (id === "Gate") {
       id = State.variables.currentNodeId || "Gate";
@@ -442,12 +456,28 @@
     }
   };
 
+  CQ.getImageForPassage = function (passageName) {
+    var id = passageName || "";
+    if (id === "Gate") {
+      id = State.variables.currentNodeId || "";
+    }
+    if (!id) return "";
+    return "img/" + id + ".png";
+  };
+
   $(document).on(":storyready :passagedisplay", function () {
     $("#menu-item-saves, #menu-story-saves, .saves, a[data-passage='Saves']").remove();
     if (setup.cq && setup.cq.renderSidebar) setup.cq.renderSidebar();
     if (setup.cq && setup.cq.applyBackground) {
       var name = (State && State.passage) ? State.passage : (typeof passage !== "undefined" && passage.title ? passage.title : "");
       setup.cq.applyBackground(name);
+    }
+    if (setup.cq && setup.cq.meta && setup.cq.meta.imageMode === "fg") {
+      var img = document.querySelector(".cq-hero[data-passage]");
+      if (img) {
+        var pass = img.getAttribute("data-passage");
+        img.src = setup.cq.getImageForPassage(pass);
+      }
     }
   });
 

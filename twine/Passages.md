@@ -12,6 +12,9 @@ Create the following passages in Twine (SugarCube 2). Copy the content exactly.
 <<nobr>>
 <div class="cq-shell">
   <div class="cq-title"><<print (setup.cq.meta && setup.cq.meta.title) ? setup.cq.meta.title : "CourseQuest">></div>
+  <<if setup.cq.meta && setup.cq.meta.imageMode == "fg">>
+    <img class="cq-hero" data-passage="Start" alt="">
+  <</if>>
   <div class="cq-subtitle">請輸入小組名稱開始任務</div>
 
   <div>小組名稱</div>
@@ -51,6 +54,9 @@ Create the following passages in Twine (SugarCube 2). Copy the content exactly.
 <<nobr>>
 <div class="cq-shell">
   <div class="cq-title">冒險開始</div>
+  <<if setup.cq.meta && setup.cq.meta.imageMode == "fg">>
+    <img class="cq-hero" data-passage="S1" alt="">
+  <</if>>
   <div class="cq-subtitle"><<print $groupName>> 你好！</div>
 
   <div class="cq-prompt">
@@ -87,6 +93,9 @@ Create the following passages in Twine (SugarCube 2). Copy the content exactly.
   <<if !_node>>
     <div class="cq-error">找不到題目，請確認 ContentCSV 是否正確。</div>
   <<else>>
+    <<if setup.cq.meta && setup.cq.meta.imageMode == "fg">>
+      <img class="cq-hero" data-passage="Gate" alt="">
+    <</if>>
     <div class="cq-prompt"><<print _displayHTML>></div>
 
     <<if _node.id == "S8">>
@@ -175,6 +184,9 @@ Create the following passages in Twine (SugarCube 2). Copy the content exactly.
 <<nobr>>
 <div class="cq-shell">
   <div class="cq-title">任務完成！</div>
+  <<if setup.cq.meta && setup.cq.meta.imageMode == "fg">>
+    <img class="cq-hero" data-passage="End" alt="">
+  <</if>>
   <div class="cq-subtitle">辛苦了，<<print $groupName>>！</div>
   <div class="cq-prompt">你們已通關，請等待下一指令。</div>
   <div class="cq-feedback">完成時間：<<print setup.cq.formatDuration(setup.cq.getElapsedMs())>></div>

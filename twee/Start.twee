@@ -2,6 +2,9 @@
 <<nobr>>
 <div class="cq-shell">
   <div class="cq-title"><<print (setup.cq.meta && setup.cq.meta.title) ? setup.cq.meta.title : "CourseQuest">></div>
+  <<if setup.cq.meta && setup.cq.meta.imageMode == "fg">>
+    <img class="cq-hero" data-passage="Start" alt="">
+  <</if>>
   <div class="cq-subtitle">請輸入小組名稱開始任務</div>
 
   <div>小組名稱</div>

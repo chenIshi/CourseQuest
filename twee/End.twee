@@ -2,6 +2,9 @@
 <<nobr>>
 <div class="cq-shell">
   <div class="cq-title">任務完成！</div>
+  <<if setup.cq.meta && setup.cq.meta.imageMode == "fg">>
+    <img class="cq-hero" data-passage="End" alt="">
+  <</if>>
   <div class="cq-subtitle">辛苦了，<<print $groupName>>！</div>
   <div class="cq-prompt">你們已通關，請等待下一指令。</div>
   <div class="cq-feedback">完成時間：<<print setup.cq.formatDuration(setup.cq.getElapsedMs())>></div>

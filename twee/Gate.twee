@@ -16,6 +16,9 @@
   <<if !_node>>
     <div class="cq-error">找不到題目，請確認 ContentCSV 是否正確。</div>
   <<else>>
+    <<if setup.cq.meta && setup.cq.meta.imageMode == "fg">>
+      <img class="cq-hero" data-passage="Gate" alt="">
+    <</if>>
     <div class="cq-prompt"><<print _displayHTML>></div>
 
     <<if _node.id == "S8">>
