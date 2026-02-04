@@ -13,7 +13,7 @@
     wrongMessage: "感謝您的努力解題！❤️ 再試一試！💪"
   };
 
-  CQ.goalIds = ["S3", "S4", "S5", "S6", "S7"];
+  CQ.goalIds = ["S3", "S4", "S5", "S6", "S7", "S9"];
 
   if (window.Config && Config.saves) {
     Config.saves.isAllowed = false;

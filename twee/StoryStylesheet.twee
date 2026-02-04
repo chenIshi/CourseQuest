@@ -65,6 +65,10 @@ body.cq-bg-S7 {
   background-image: linear-gradient(rgba(8, 20, 20, 0.45), rgba(8, 20, 20, 0.65)), url("img/S7.png");
 }
 
+body.cq-bg-S9 {
+  background-image: linear-gradient(rgba(8, 20, 20, 0.45), rgba(8, 20, 20, 0.65)), url("img/S9.png");
+}
+
 body.cq-bg-S8 {
   background-image: linear-gradient(rgba(8, 20, 20, 0.45), rgba(8, 20, 20, 0.65)), url("img/S8.png");
 }
